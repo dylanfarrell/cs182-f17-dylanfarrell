@@ -36,7 +36,7 @@ See [http://ipython.org/](http://ipython.org/) for more details.
 Do all six problems. Unless otherwise noted, your functions should be non-destructive, meaning it should not change the object passed as arguments to functions. Always aim to make your programs elegant and include comments for all of your functions. Your solutions must adhere to the function specifications as they appear below. Your functions need not perform error checking, but must work for all reasonable input.
 
 
-### Problem 1
+### Problem 1 (2 points)
 
 Write a function called `matrix_multiply` which multiplies two 2-dimensional lists of real numbers. For instance,
 
@@ -61,7 +61,7 @@ If you are not familiar with lists in Python, you may want to read about them he
 [http://docs.python.org/library/functions.html#list](http://docs.python.org/library/functions.html#list)
 
 
-### Problem 2
+### Problem 2 (3 points)
 Complete the definitions of the methods `init`, `push` and `pop` in the Python classes `MyQueue` and `MyStack`, using a deque data structure in Python. The operation pop should return, not print, the appropriate object in the structure. If empty, it should return None instead of throwing an error. On the other hand, operation push does not have to return anything. An example behavior is as follows:
 
 
@@ -78,7 +78,7 @@ If you are unfamiliar with deques and class declarations in Python, read about t
 
 [http://docs.python.org/tutorial/classes.html](http://docs.python.org/tutorial/classes.html)
 
-### Problem 3
+### Problem 3 (3 points)
 For the two classes written in Problem 2, override __eq__, __ne__, and __str__ methods. You can read about these methods in detail here:
 
 [http://docs.python.org/reference/datamodel.html#basic-customization](http://docs.python.org/reference/datamodel.html#basic-customization)
@@ -94,7 +94,7 @@ Simply put, the above methods do the following:
 We will call two stacks or two queues _equal_ if and only if they contain the same elements and in the same order. You may assume that only elements they contain are integers.
 
 
-### Problem 4
+### Problem 4 (5 points)
 Write three functions called `add_position_iter`, `add_position_recur`, and `add_position_map`, using iteration, recursion, and the built-in map function, respectively. All the versions should take a list of numbers and return a new list containing, in order, each of the original numbers incremented by the position of that number in the list. Positions in lists are numbered starting with 0, so:
 
 
@@ -120,7 +120,7 @@ ret = util.add_position_iter([0, 0, 3, 1], number_from=3)
 assert(ret == [3, 4, 8, 7])
 ```
 
-### Problem 5
+### Problem 5 (4 points)
 
 Write a function called `remove_course` which takes in `roster`, `student`, `course` as arguments and returns a modified roster. This function, unlike ones you've just written, should be destructive, meaning that roster should be modified directly.
 
@@ -143,7 +143,7 @@ util.remove_course(roster, 'kyu', 'cs182')
 assert(roster == {'kyu': set([]), 'david': set(['cs182'])})
 ```
 
-### Problem 6
+### Problem 6  (3 points)
 Now write a function called `copy_remove_course`. The specifications are the same as above except the function should now be non-destructive. An example behavior is as follows:
 
 
@@ -162,6 +162,6 @@ http://docs.python.org/2/library/copy.html
 
 ## Submission
 
-The assignment should be completed individually. You are encouraged to consult online sources and post questions on Piazza. You are allowed, and encouraged to, discuss problems with your peers; however, you may not share code. Submit your modified `util.py` or a link to your GitHub repository to Canvas by the due date. If you still have problems after consulting Python resources, you are encouraged to consult your peers and use the Piazza discussion forum.
+The assignment should be completed individually. You are encouraged to consult online sources and post questions on Piazza. You are allowed, and encouraged to, discuss problems with your peers; however, you may not share code. Submit a link to your GitHub repository to Canvas by the due date. If you still have problems after consulting Python resources, you are encouraged to consult your peers, come to office hours, and use the Piazza discussion forum.
 
 Good luck!
