@@ -1,12 +1,14 @@
 import util
 
+# Note: the TF's grading script may include additional test cases beyond those given below, so you should extend this on your own to test your code.
+
 # ### Problem 1
 # 
 # Write a function called `matrix_multiply` which multiplies two 2-dimensional lists of real numbers. For instance,
 
 mm = util.matrix_multiply([[1, 2], [3, 4]], [[5, 6], [7, 8]]) 
 # should evaluate to
-assert(mm == [[5, 12],[21, 32]])
+assert(mm == [[19, 22],[43, 50]])
 
 # ### Problem 2
 # Complete the definitions of the methods `init`, `push` and `pop` in the Python classes `MyQueue` and `MyStack`, using a deque data structure in Python. The operation pop should return, not print, the appropriate object in the structure. If empty, it should return None instead of throwing an error. On the other hand, operation push does not have to return anything. An example behavior is as follows:

@@ -44,7 +44,7 @@ Write a function called `matrix_multiply` which multiplies two 2-dimensional lis
 ```python
 mm = util.matrix_multiply([[1, 2], [3, 4]], [[5, 6], [7, 8]]) 
 # should evaluate to
-assert(mm == [[ 5, 12],[21, 32]])
+assert(mm == [[ 19, 22],[43, 50]])
 ```
 
 Your function should return the result matrix as a 2-dimensional list
