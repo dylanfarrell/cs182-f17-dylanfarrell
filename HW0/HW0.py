@@ -4,7 +4,7 @@ import util
 # 
 # Write a function called `matrix_multiply` which multiplies two 2-dimensional lists of real numbers. For instance,
 
-mm = util.matrix_multiply([[1, 2], [3, 4]], [[4, 3], [2, 1]]) 
+mm = util.matrix_multiply([[1, 2], [3, 4]], [[5, 6], [7, 8]]) 
 # should evaluate to
 assert(mm == [[5, 12],[21, 32]])
 
