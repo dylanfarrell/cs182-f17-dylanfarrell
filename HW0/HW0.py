@@ -6,7 +6,7 @@ import util
 
 mm = util.matrix_multiply([[1, 2], [3, 4]], [[4, 3], [2, 1]]) 
 # should evaluate to
-assert(mm == [[8, 5], [20, 13]])
+assert(mm == [[5, 12],[21, 32]])
 
 # ### Problem 2
 # Complete the definitions of the methods `init`, `push` and `pop` in the Python classes `MyQueue` and `MyStack`, using a deque data structure in Python. The operation pop should return, not print, the appropriate object in the structure. If empty, it should return None instead of throwing an error. On the other hand, operation push does not have to return anything. An example behavior is as follows:
