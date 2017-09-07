@@ -16,6 +16,22 @@ mm = util.matrix_multiply([[1, 2], [3, 4]], [[5, 6], [7, 8]])
 # should evaluate to
 assert(mm == [[19, 22], [43, 50]])
 
+a = [[1,8],[3,9]]
+b = [[5,10],[3,8]]
+c = [[1,2,3],[4,5,6]]
+
+m1 = util.matrix_multiply(a,b)
+m2 = util.matrix_multiply(b,a)
+m3 = util.matrix_multiply(a,c)
+m4 = util.matrix_multiply(b,c)
+
+assert(m1 == [[29, 74], [42, 102]])
+assert(m2 == [[35, 130], [27, 96]])
+assert(m3 == [[33, 42, 51], [39, 51, 63]])
+assert(m4 == [[45, 60, 75], [35, 46, 57]])
+
+
+
 """
 Problem 2
 
@@ -28,9 +44,22 @@ On the other hand, operation push does not have to return anything.
 An example behavior is as follows:
 """
 
+s = util.MyStack()
+
+assert(s.pop() == None)
+
+s.push(1)
+s.push(2)
+s.push(3)
+# should evaluate to
+assert(s.pop() == 3)
+
 q = util.MyQueue()
+
+assert(q.pop() == None)
 q.push(1)
 q.push(2)
+q.push(3)
 # should evaluate to
 assert(q.pop() == 1)
 
@@ -54,7 +83,26 @@ print the elements.
 We will call two stacks or two queues _equal_ if and only if they contain the
 same elements and in the same order. You may assume that only elements they
 contain are integers.
+
 """
+q2 = util.MyQueue()
+q2.push(3)
+q2.push(2)
+q2.push(1)
+
+s2 = util.MyQueue()
+s2.push(3)
+s2.push(2)
+s2.push(1)
+
+assert(q.__eq__(q) == True)
+assert(q.__ne__(q) == False)
+assert(q.__eq__(q2) == False)
+assert(q.__ne__(q2) == True)
+assert(s.__eq__(s) == True)
+assert(s.__ne__(s) == False)
+assert(s.__eq__(s2) == False)
+assert(s.__ne__(s2) == True)
 
 """
 Problem 4

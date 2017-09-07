@@ -9,17 +9,22 @@ from collections import deque
 ## Problem 1
 
 def matrix_multiply(x, y):
-    def dot(x, y):
-        n = sum([a*b for a, b in zip(x, y)])
-        return n
-    lsts = []
-    for i in x:
-        lst = []
-        for j in range(0, len(y[0])):
-            lst.append(dot(i, [row[j] for row in y]))
-        lsts.append(lst)
-    return lsts
-
+    if not(len(x[0]) == len(y)):
+        raise ValueError("Row and column lengths do not match up")
+    else:
+        # dot product helper function
+        def dot(x, y):
+            n = sum([a*b for a, b in zip(x, y)])
+            return n
+        # initiate list of lists to store matrix rows
+        lsts = []
+        # create each row of the matrix
+        for i in x:
+            lst = []
+            for j in range(0, len(y[0])):
+                lst.append(dot(i, [row[j] for row in y]))
+            lsts.append(lst)
+        return lsts
 
 ## Problem 2, 3
 
@@ -48,12 +53,12 @@ class MyStack:
     def push(self, val):
         self.data.append(val)
     def pop(self):
-        if self.data == []:
-            return None
-        else:
+        if self.data:
             copy = self.data[-1]
             del self.data[-1]
             return copy
+        else:
+            return None
     def __eq__(self, other):
         return self.data == other.data
     def __ne__(self, other):
@@ -68,9 +73,11 @@ def add_position_iter(lst, number_from=0):
 
 def add_position_recur(lst, number_from=0):
     if lst:
+        # create first element of the desired output list
         frst = [lst[0]+number_from]
         a = number_from+1
         return frst+(add_position_recur(lst[1:len(lst)], number_from=a))
+    # return empty list in base case
     else:
         return lst
 
