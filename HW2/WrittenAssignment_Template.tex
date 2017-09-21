@@ -1,0 +1,36 @@
+\documentclass[11pt,letter]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{fullpage}
+
+\begin{document}
+
+\title{CS182 Problem Set 2: Written Assignment}
+\author{Your Name Here}
+\date{Due: October 5, 2017}
+\maketitle 
+
+
+\section*{Question 1 (3 points)}
+
+In addition to minimax/expectimax, another way to design an agent to play Pacman is to create an agent that uses an evaluation function to decide its actions. This means that at each step, the agent uses an evaluation function to rate each possible action (i.e. a direction that Pacman can move) and chooses the action with the best rating. Describe an evaluation function that could be used to play Pacman successfully.
+
+\paragraph{Answer:} Answer to Question 1 here.
+
+\section*{Question 2 (3 points)}
+
+Prove the following assertion: For every game tree, the utility obtained by MAX using minimax decisions against a suboptimal MIN will be never be lower than the utility obtained playing against an optimal MIN. Can you come up with a game tree in which MAX can do still better using a $suboptimal$ strategy against a suboptimal MIN?
+
+\paragraph{Answer:} Answer to Question 2 here.
+
+\section*{Question 3 (4 points)}
+
+AC-3 puts back on the queue $every$ arc $(X_k, X_i)$ whenever $any$ value is deleted from the domain of $X_i$, even if each value of $X_k$ is consistent with several remaining values of $X_i$. Suppose that, for every arc $(X_k, X_i)$, we keep track of the number of remaining values of $X_i$ that are consistent with each value of $X_k$. Explain how to update these numbers efficiently and hence show that arc consistency can be enforced in total time $O(n^2d^2)$.
+
+\paragraph{Answer:} Answer to Question 3 here.
+
+\end{document}
