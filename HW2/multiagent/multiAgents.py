@@ -129,7 +129,56 @@ class MinimaxAgent(MultiAgentSearchAgent):
             Returns the total number of agents in the game
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+
+        def nextAgent(agent):
+          if agent+1 <= gameState.getNumAgents()-1:
+            return agent+1
+          else:
+            return 0
+
+        def maxval(state,agent,depth):
+          if depth > self.depth:
+            return self.evaluationFunction(state)
+          else:
+            v = -(float('inf'))
+            actions = state.getLegalActions(agent)
+            successors = []
+            for act in actions:
+              successors.append(state.generateSuccessor(agent, act))
+            for i in successors:
+              v = max(v, val(i,nextAgent(agent),depth))
+            return v
+
+        def minval(state,agent,depth):
+          v = (float('inf'))
+          actions = state.getLegalActions(agent)
+          successors = []
+          for act in actions:
+            successors.append(state.generateSuccessor(agent, act))
+          for i in successors:
+            v = min(v, val(i,nextAgent(agent),depth))
+          return v
+
+        def val(state,agent,depth):
+          if state.getLegalActions(agent) == []:
+            return self.evaluationFunction(state)
+          elif agent == 0:
+            depth += 1
+            return maxval(state, agent, depth)
+          else :
+            return minval(state, agent, depth)
+
+        acts = gameState.getLegalActions(0)
+        if acts == [] or self.depth == 0:
+          return []
+        else:
+          pairs = {}
+          for i in acts:
+            pairs[i] = val(gameState.generateSuccessor(0, i),nextAgent(0),1)
+          return max(pairs, key = pairs.get)
+
+
+        #util.raiseNotDefined()
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
@@ -141,7 +190,57 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
           Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        #depth = 0
+
+        def nextAgent(agent):
+          if agent+1 <= gameState.getNumAgents()-1:
+            return agent+1
+          else:
+            return 0
+
+        def maxval(state,agent,alpha,beta,depth):
+          if depth == self.depth or state.isWin() or state.isLose():
+            return self.evaluationFunction(state)
+          else :
+            v = -(float('inf'))
+            actions = state.getLegalActions(agent)
+            for act in actions:
+              s = state.generateSuccessor(agent, act)
+              v = max(v, minval(s,nextAgent(agent),alpha,beta,depth))
+              if v > beta:
+                return v
+              alpha = max(alpha,v)
+            return v
+
+        def minval(state,agent,alpha,beta,depth):
+          if depth == self.depth or state.isWin() or state.isLose():
+            return self.evaluationFunction(state)
+          else :
+            v = (float('inf'))
+            actions = state.getLegalActions(agent)
+            for act in actions:
+              s = state.generateSuccessor(agent, act)
+              if nextAgent(agent) == 0:
+                v = min(v, maxval(s,nextAgent(agent),alpha,beta,(depth+1)))
+              else :
+                v = min(v, minval(s,nextAgent(agent),alpha,beta,depth))
+              if v < alpha:
+                return v
+              beta = min(beta,v)
+            return v
+
+        acts = gameState.getLegalActions(0)
+        if acts == [] or self.depth == 0:
+          return []
+        else:
+          pairs = {}
+          alpha = -float('inf')
+          beta = (float('inf'))
+          for i in acts:
+            v = minval(gameState.generateSuccessor(0, i),nextAgent(0),alpha,beta,0)
+            alpha = max(alpha,v)
+            pairs[i] = v
+          return max(pairs, key = pairs.get)
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
@@ -156,7 +255,47 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
           legal moves.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        def nextAgent(agent):
+          if agent+1 <= gameState.getNumAgents()-1:
+            return agent+1
+          else:
+            return 0
+
+        def maxval(state,agent,depth):
+          if depth == self.depth or state.isWin() or state.isLose():
+            return self.evaluationFunction(state)
+          else:
+            v = -(float('inf'))
+            actions = state.getLegalActions(agent)
+            for act in actions:
+              s = state.generateSuccessor(agent, act)
+              v = max(v, expval(s,nextAgent(agent),depth))
+            return v
+
+        def expval(state,agent,depth):
+          if depth == self.depth or state.isWin() or state.isLose():
+            return self.evaluationFunction(state)
+          else:
+            v = 0
+            actions = state.getLegalActions(agent)
+            p = 1./(float(len(actions)))
+            for act in actions:
+              s = state.generateSuccessor(agent, act)
+              if nextAgent(agent) == 0:
+                v += p*maxval(s,nextAgent(agent),depth+1)
+              else:
+                v += p*expval(s,nextAgent(agent),depth)
+            return v
+
+        acts = gameState.getLegalActions(0)
+        if acts == [] or self.depth == 0:
+          return []
+        else:
+          pairs = {}
+          for i in acts:
+            v = expval(gameState.generateSuccessor(0, i),nextAgent(0),0)
+            pairs[i] = v
+          return max(pairs, key = pairs.get)
 
 def betterEvaluationFunction(currentGameState):
     """

@@ -81,21 +81,42 @@ class Sudoku:
         Returns the first variable with assignment epsilon
         i.e. first square in the board that is unassigned.
         """
-        raise NotImplementedError()
+        for i in range(0, 9):
+            for j, var in enumerate(self.row(i)):
+                if var == 0:
+                    return (i,j)
+        return None
 
     def complete(self):
         """
         IMPLEMENT FOR PART 1
         Returns true if the assignment is complete. 
         """
-        raise NotImplementedError()
+        return self.firstEpsilonVariable() == None
 
     def variableDomain(self, r, c):
         """
         IMPLEMENT FOR PART 1
         Returns current domain for the (row, col) variable .
         """
-        raise NotImplementedError()
+        if self.board[r][c] != 0:
+            return [None]*9
+        else:
+            vals = [1,2,3,4,5,6,7,8,9]
+            b = self.box_id(r,c)
+            nums = []
+            for i in self.row(r):
+                if i != 0:
+                    nums.append(i)
+            for i in self.col(c):
+                if i != 0:
+                    nums.append(i)
+            for i in self.box(b):
+                if i != 0:
+                    nums.append(i)
+
+            crossOff(vals,nums)
+            return vals
 
     # PART 2
     def updateFactor(self, factor_type, i):
@@ -105,29 +126,46 @@ class Sudoku:
         `factor_type` is one of BOX, ROW, COL 
         `i` is an index between 0 and 8.
         """
-        raise NotImplementedError()
-        # values = []
-        # if factor_type == BOX:
-            
-        # if factor_type == ROW:
-            
-        # if factor_type == COL:
-            
-        
+        values = []
+        remaining = [1,2,3,4,5,6,7,8,9]
+
+        if factor_type == BOX:
+            lst = self.box(i)
+        if factor_type == ROW:
+            lst = self.row(i)
+        if factor_type == COL:
+            lst = self.col(i)
+
+        for j in lst:
+            if j != 0:
+                values.append(j)
+
+        self.factorNumConflicts[(factor_type,i)] = crossOff(remaining,values)
+
+        self.factorRemaining[(factor_type,i)] = remaining
+
     def updateAllFactors(self):
         """
         IMPLEMENT FOR PART 2
         Update the values remaining for all factors.
         There is one factor for each row, column, and box.
         """
-        raise NotImplementedError()
+        for i in range(0,9):
+            self.updateFactor(BOX,i)
+            self.updateFactor(ROW,i)
+            self.updateFactor(COL,i)
 
     def updateVariableFactors(self, variable):
         """
         IMPLEMENT FOR PART 2
         Update all the factors impacting a variable (neighbors in factor graph).
         """
-        raise NotImplementedError()
+        r = variable[0]
+        c = variable[1]
+        b = self.box_id(r,c)
+        self.updateFactor(ROW,r)
+        self.updateFactor(COL,r)
+        self.updateFactor(BOX,b)
 
     # CSP SEARCH CODE
     def nextVariable(self):
@@ -146,7 +184,14 @@ class Sudoku:
         Returns new assignments with each possible value 
         assigned to the variable returned by `nextVariable`.
         """
-        raise NotImplementedError()
+        var = self.nextVariable()
+        r = var[0]
+        c = var[1]
+        successors = []
+        for val in self.variableDomain(r,c):
+            if val != None:
+                successors.append(self.setVariable(r,c,val))
+        return successors
 
     def getAllSuccessors(self):
         if not args.forward: 
@@ -163,7 +208,15 @@ class Sudoku:
         IMPLEMENT IN PART 4
         Returns true if all variables have non-empty domains.
         """
-        raise NotImplementedError()
+        unassigned = []
+        for i in range(0, 9):
+            for j, var in enumerate(self.row(i)):
+                if var == 0:
+                    unassigned.append((i,j))
+        for var in unassigned:
+            if self.variableDomain(var[0],var[1]) == ([None]*9):
+                return False
+        return True
 
     # LOCAL SEARCH CODE
     # Fixed variables cannot be changed by the player.
@@ -207,8 +260,20 @@ class Sudoku:
         with all the row factors being held consistent. 
         Should call `updateAllFactors` at end.
         """
-        raise NotImplementedError()
-        # self.updateAllFactors()
+        for i in range(0, 9):
+            unassigned = []
+            for j, var in enumerate(self.row(i)):
+                if var == 0:
+                    unassigned.append((i,j))
+            remaining = [1,2,3,4,5,6,7,8,9]
+            for j in self.row(i):
+                if j != 0:
+                    remaining.remove(j)
+            for var in unassigned:
+                val = random.choice(remaining)
+                remaining.remove(val)
+                self.board[var[0]][var[1]] = val
+        self.updateAllFactors()
     
     # PART 6
     def randomSwap(self):
@@ -217,8 +282,18 @@ class Sudoku:
         Returns two random variables that can be swapped without
         causing a row factor conflict.
         """
-        raise NotImplementedError()
-      
+        lst = [0,1,2,3,4,5,6,7,8]
+        r = random.choice(lst)
+        valid = [c for c in lst if (r,c) not in self.fixedVariables.keys()]
+        if len(valid) >= 2:
+            c1 = random.choice(valid)
+            valid.remove(c1)
+            c2 = random.choice(valid)
+            var1 = (r,c1)
+            var2 = (r,c2)
+            return (var1,var2)
+        else :
+            self.randomSwap()   
 
     # PART 7
     def gradientDescent(self, variable1, variable2):
@@ -226,8 +301,20 @@ class Sudoku:
         IMPLEMENT FOR PART 7
         Decide if we should swap the values of variable1 and variable2.
         """
-        raise NotImplementedError()
-
+        a = random.random()
+        r1 = variable1[0]
+        c1 = variable1[1]
+        r2 = variable2[0]
+        c2 = variable2[1]
+        val1 = self.board[r1][c1]
+        val2 = self.board[r2][c2]
+        temp = self.setVariable(r1,c1,val2)
+        new = temp.setVariable(r2,c2,val1)
+        new.updateAllFactors()
+        self.updateAllFactors()
+        if self.numConflicts() >= new.numConflicts() or a < 0.001:
+            self.board = new.board
+            self.updateAllFactors()
         
     ### IGNORE - PRINTING CODE
         
@@ -442,7 +529,7 @@ def solveLocal(problem):
                 os.system("clear")
                 print state
                 raw_input("Press Enter to continue...")            
-    
+        print str(state.numConflicts())
                 
 
 boardHard = [[0,0,0,0,0,8,9,0,2],
@@ -521,4 +608,4 @@ if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))
 
 
-
+set_args(["--forward", "1"])
