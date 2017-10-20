@@ -12,7 +12,7 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
-import mdp, util
+import mdp, util, copy
 
 from learningAgents import ValueEstimationAgent
 
@@ -46,6 +46,29 @@ class ValueIterationAgent(ValueEstimationAgent):
         # Write value iteration code here
         "*** YOUR CODE HERE ***"
 
+        self.qvalues = util.Counter()
+
+        for i in range(0, self.iterations):
+	        values_copy = copy.copy(self.values)
+
+	        states = mdp.getStates()
+	        for state in states:
+	        	acts = mdp.getPossibleActions(state)
+	        	if acts != []:
+	        		qvals = []
+		        	for act in acts:
+		        		self.computeQValueFromValues(state,act)
+		        		nextstates = mdp.getTransitionStatesAndProbs(state,act)
+		        		expected_val = 0
+		        		if nextstates != []:
+			        		for s, p in nextstates:
+			        			reward = mdp.getReward(state, act, s)
+			        			expected_val += p*(reward+self.discount*values_copy[s])
+			        		self.qvalues[(state, act, i)] = expected_val
+			        		qvals.append(expected_val)
+		         	if qvals != []:
+		         		self.values[state] = max(qvals)
+
 
     def getValue(self, state):
         """
@@ -60,7 +83,15 @@ class ValueIterationAgent(ValueEstimationAgent):
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        nextstates = self.mdp.getTransitionStatesAndProbs(state,action)
+        expected_val = 0
+        if nextstates != []:
+        	for s, p in nextstates:
+        		reward = self.mdp.getReward(state, action, s)
+        		expected_val += p*(reward+self.discount*self.values[s])
+        return expected_val
+
+
 
     def computeActionFromValues(self, state):
         """
@@ -72,7 +103,19 @@ class ValueIterationAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        acts = self.mdp.getPossibleActions(state)
+        if acts != [] :
+        	options = {}
+        	for act in acts:
+        		options[act] = self.computeQValueFromValues(state, act)
+        	if len(options) != 0:	
+        		return max(options, key = options.get)
+        	else :
+        		return None
+        else:
+        	return None
+
+
 
     def getPolicy(self, state):
         return self.computeActionFromValues(state)
