@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import copy
 
 #number of items
 N = 100
@@ -27,8 +28,81 @@ v = np.array([25, 27, 15, 25, 13, 15, 18, 24, 25, 30, 12, 18, 28, 30, 20, 26, 24
 
 def simulated_annealing():
     # YOUR CODE HERE
-    # return a trace of values resulting from your simulated annealing
-    return np.random.random_integers(200,300, 10)
+
+    current_bag = []
+    #list of available items
+    inds = list(xrange(N))
+    trials = 60000
+    
+    def value(bag):
+      val = 0
+      if bag == []:
+        return val
+      else:
+        for i in bag:
+          val += v[i]
+        return val
+
+    def weight(bag):
+      weight = 0
+      if bag != []:
+        for i in bag:
+          weight += w[i]
+      return weight
+
+    #store values of bag after each iteration
+    values_trace = []
+
+    #initialize temperature
+    temp = 1
+
+    #track best bag
+    best_bag = []
+
+    for t in range(1,trials):
+      #decrement temperature
+      temp = temp*.999999
+      #pick item to add to bag
+      next_item = np.random.choice(inds)
+      next_bag = current_bag+[next_item]
+      inds2 = copy.copy(inds)
+      inds2.remove(next_item)
+
+      #if bag is too heavy, remove items randomly one by one until
+      #under weight limit
+      while weight(next_bag) >= W:
+        drop = np.random.choice(next_bag)
+        next_bag.remove(drop)
+        inds2.append(drop)
+
+      #calculate value difference between current bag and new sample bag
+      delta = value(next_bag)-value(current_bag)
+      if delta >= 0:
+        current_bag = next_bag
+        inds = copy.copy(inds2)
+        if value(current_bag) > value(best_bag):
+          best_bag = copy.copy(current_bag)
+        values_trace.append(value(current_bag))
+
+      else:
+        a = np.random.random()
+        if a < np.exp(delta/temp):
+          current_bag = next_bag
+          inds = copy.copy(inds2)
+          if value(current_bag) > value(best_bag):
+            best_bag = copy.copy(current_bag)
+          values_trace.append(value(current_bag))
+
+        else:
+          values_trace.append(value(current_bag))
+
+    print "Simulated Annealing"
+    print "Value:" + str(value(best_bag))
+    print "Weight:" + str(weight(best_bag))
+    print "Bag:" + str(best_bag)
+    return values_trace #np.random.random_integers(200,300, 10) #current_bag
+
+
 
 if __name__ == "__main__":
     # Greedy result is maximize v/w
