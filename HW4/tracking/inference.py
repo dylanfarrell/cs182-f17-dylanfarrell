@@ -156,14 +156,15 @@ class ExactInference(InferenceModule):
         allPossible = util.Counter()
         allPossible = self.beliefs
         for p in self.legalPositions:
-            trueDistance = util.manhattanDistance(p, pacmanPosition)
             if noisyDistance == None:
                 allPossible = util.Counter()
                 allPossible[self.getJailPosition()] = 1.0
-            elif emissionModel[trueDistance] > 0.:
+            else:
+                trueDistance = util.manhattanDistance(p, pacmanPosition)
+            #elif emissionModel[trueDistance] > 0.:
                 allPossible[p] = emissionModel[trueDistance]*allPossible[p]
-            else :
-                allPossible[p] = 0.
+            #else :
+                #allPossible[p] = 0.
 
         "*** END YOUR CODE HERE ***"
 
@@ -325,7 +326,6 @@ class ParticleFilter(InferenceModule):
                 self.initializeUniformly(gameState)
             else:
                 self.particles = util.nSample(allPossible.values(),allPossible.keys(),self.numParticles)
-                #[util.sample(allPossible) for i in range(self.numParticles)]
 
     def elapseTime(self, gameState):
         """
@@ -348,11 +348,8 @@ class ParticleFilter(InferenceModule):
         for p in self.particles:
             newPosDist = self.getPositionDistribution(self.setGhostPosition(gameState, p))
             for newPos, prob in newPosDist.items():
-                 new_beliefs[newPos] += prob #*self.beliefs[p]
+                 new_beliefs[newPos] += prob
         self.particles = util.nSample(new_beliefs.values(),new_beliefs.keys(),self.numParticles) 
-
-        #for i in range(self.numParticles)]
-
 
     def getBeliefDistribution(self):
         """
