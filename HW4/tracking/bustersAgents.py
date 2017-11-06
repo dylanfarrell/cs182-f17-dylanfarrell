@@ -163,4 +163,34 @@ class GreedyBustersAgent(BustersAgent):
             [beliefs for i, beliefs in enumerate(self.ghostBeliefs)
              if livingGhosts[i+1]]
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        mlpos = []
+        for dist in livingGhostPositionDistributions:
+            mlpos.append(dist.argMax())
+        g = {}
+        for p in mlpos:
+            g[p] = self.distancer.getDistance(pacmanPosition,p)
+        closest = min(g, key = g.get)
+        d = self.distancer.getDistance(pacmanPosition,closest)
+        for a in legal:
+            successorPosition = Actions.getSuccessor(pacmanPosition, a)
+            if self.distancer.getDistance(successorPosition,closest) < d:
+                return a
+
+
+
+        #util.raiseNotDefined()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
