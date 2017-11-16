@@ -15,7 +15,7 @@ class TextClassifier:
         """
         Return your full name as it appears in the class roster as well as all collaborators as a list of strings
         """
-        return ["Scott Kuindersma", "Brian Plancher"]
+        return ["Dylan Farrell"]
 
     def q1(self):
         """
@@ -25,7 +25,9 @@ class TextClassifier:
         Given only this information, what are the most likely
         probabilities of rolling each side? (Hardcoding is fine)
         """
-        return [0.1, 0.8, 0.2, 0.0]
+        rolls = [3, 1, 4, 4, 2, 1, 2, 4, 2, 1, 2, 1, 1, 1, 1, 4, 3, 4, 4, 1]
+
+        return [float(rolls.count(i))/len(rolls) for i in range(1,5)]
 
     def q2(self):
         """
@@ -39,7 +41,12 @@ class TextClassifier:
         Using the same observations as in q1 and a prior with a per-side
         "strength" of 2, what are the probabilities of rolling each side??
         """
-        return [0.1, 0.8, 0.2, 0.0]
+        rolls = [3, 1, 4, 4, 2, 1, 2, 4, 2, 1, 2, 1, 1, 1, 1, 4, 3, 4, 4, 1]
+        strength = 2
+        for i in range(1,5):
+        	rolls += [i]*strength
+
+        return [float(rolls.count(i))/len(rolls) for i in range(1,5)]
 
     def q3(self, counts=[1,1,3,8]):
         """
@@ -59,7 +66,8 @@ class TextClassifier:
         5 times, once for each rating. We pass in the number of times each
         word shows up in any review corresponding to the current rating.
         """
-        return [0.1, 0.8, 0.2, 0.0]
+
+        return [float(counts[i])/sum(counts) for i in range(len(counts))]
 
     def q4(self, infile):
         """
@@ -81,9 +89,25 @@ class TextClassifier:
         reviews corresponding to ranking
         nrated[ranking] is the total number of reviews with each ranking
         """
-        self.dict = {"compsci": 0, "182": 1, ".": 2}
-        self.counts = [[0,0,0],[0,0,0],[1,1,1],[0,0,0],[0,0,0]]
-        self.nrated = [0,0,1,0,0]
+        self.dict = {}
+
+        f = open(infile)
+        for review in f:
+        	for w in review.split(" ")[1:]:
+        		w = w.replace("\n", "")
+        		if w not in self.dict:
+        			self.dict[w] = len(self.dict)
+
+        self.counts = [[0]*len(self.dict) for i in range(5)]
+        self.nrated = [0]*5
+        
+        f = open(infile)
+        for rewiew in f:
+        	rank = int(rewiew[0])
+        	self.nrated[rank] += 1
+        	for w in rewiew.split(" ")[1:]:
+        		w = w.replace("\n", "")
+        		self.counts[rank][self.dict[w]] += 1
 
     def q5(self, alpha=1):
         """
@@ -93,7 +117,13 @@ class TextClassifier:
         Alpha is the per-word "strength" of the prior (as in q2).
         (What might "fairness" mean here?)
         """
-        self.F = [[0,0,0], [0,0,0], [1,8,2], [0,0,0], [0,0,0]]
+
+        self.F = [[0]*len(self.dict) for i in range(5)]
+
+        for rank_index, rank_counts in enumerate(self.counts):
+        	total_count = (alpha * len(self.dict)) + sum(rank_counts)
+        	for word_index, word_count in enumerate(rank_counts):
+        		self.F[rank_index][word_index] = -log(float(word_count+alpha)/total_count+0.000001)
 
     def q6(self, infile):
         """
@@ -102,7 +132,28 @@ class TextClassifier:
         Are there any factors that won't affect your prediction?
         You'll report both the list of predicted ratings in order and the accuracy.
         """
-        return ([2], 0.000000000000182)
+
+        f = open(infile)
+        predicts = []
+        accurate = 0
+
+        for review in f:
+        	priors = [-log(float(r)/sum(self.nrated)) for r in self.nrated]
+        	for w in review.split(" ")[1:]:
+        		w = w.replace("\n", "")
+        		if w in self.dict:
+        			for ranking in range(5):
+        				priors[ranking] += self.F[ranking][self.dict[w]]
+        	best = float('inf')
+        	pred = 0
+        	for i in range(len(priors)):
+        		if priors[i] <= best:
+        			best = priors[i]
+        			pred = i
+        	predicts.append(pred)
+        	if pred == int(review[0]):
+        		accurate += 1
+        return (predicts, float(accurate)/len(predicts))
 
     def q7(self, infile):
         """
@@ -116,7 +167,15 @@ class TextClassifier:
         Find and return a good value of alpha (hint: you will want to call q5 and q6).
         What happens when alpha = 0?
         """
-        return 0
+        best_alpha = 0
+        best_acc = 0
+        for alpha in [i*0.1 for i in range(40)]:
+        	self.q5(alpha)
+        	accuracy = self.q6(infile)[1]
+        	if accuracy > best_acc:
+        		best_acc = accuracy
+        		best_alpha = alpha
+        return best_alpha
 
     def q8(self):
         """
@@ -128,7 +187,18 @@ class TextClassifier:
         You'll return the strings rather than the indices, and in decreasing order of
         representativeness.
         """
-        return [["182", "compsci", "."] for _ in range(5)]
+        reps = []
+        for rank in range(5):
+        	differences = []
+        	for w in self.dict:
+        		max_diff = -float("inf")
+        		for rprime in range(5):
+        			if rprime != rank:
+        				d = self.F[rank][self.dict[w]] - self.F[rprime][self.dict[w]]
+        				max_diff = max(d,max_diff)
+        		differences.append((max_diff, w))
+        	reps.append([sorted(differences)[i][1] for i in range(3)])
+        return reps
 
     """
     You did it! If you're curious, the dataset came from (Socher 2013), which describes
