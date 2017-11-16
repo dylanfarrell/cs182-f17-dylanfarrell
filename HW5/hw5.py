@@ -100,7 +100,7 @@ class TextClassifier:
 
         self.counts = [[0]*len(self.dict) for i in range(5)]
         self.nrated = [0]*5
-        
+
         f = open(infile)
         for rewiew in f:
         	rank = int(rewiew[0])
@@ -169,7 +169,7 @@ class TextClassifier:
         """
         best_alpha = 0
         best_acc = 0
-        for alpha in [i*0.1 for i in range(40)]:
+        for alpha in [i*0.05 for i in range(40)]:
         	self.q5(alpha)
         	accuracy = self.q6(infile)[1]
         	if accuracy > best_acc:
